@@ -1,0 +1,23 @@
+// around line 1886 in hpl_sercom.c
+
+
+/**
+ * \brief Enable/disable I2C slave interrupt
+ */
+int32_t _i2c_s_async_set_irq_state(struct _i2c_s_async_device *const device, const enum _i2c_s_async_callback_type type,
+                                   const bool state)
+{
+	ASSERT(device);
+
+	if (I2C_S_DEVICE_TX == type || I2C_S_DEVICE_RX_COMPLETE == type) {
+		hri_sercomi2cs_write_INTEN_DRDY_bit(device->hw, state);
+	} else if (I2C_S_DEVICE_AMATCH == type) {
+		hri_sercomi2cs_write_INTEN_AMATCH_bit(device->hw, state);
+	} else if (I2C_S_DEVICE_ERROR == type) {
+		hri_sercomi2cs_write_INTEN_ERROR_bit(device->hw, state);
+	} else if (I2C_S_DEVICE_PREC == type) {	
+		hri_sercomi2cs_write_INTEN_PREC_bit(device->hw, state);
+	}
+
+	return ERR_NONE;
+}
